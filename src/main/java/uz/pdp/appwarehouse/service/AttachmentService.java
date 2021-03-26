@@ -86,9 +86,13 @@ public class AttachmentService {
         if (optionalAttachment.isPresent()) {
             Attachment attachment = optionalAttachment.get();
             attachmentRepository.delete(attachment);
-            attachmentContentRepository.deleteById(attachment.getId());
-            return new Result("Attachment deleted", true);
+            Optional<AttachmentContent> optionalAttachmentContent = attachmentContentRepository.findByAttachment(attachment);
+            if (optionalAttachmentContent.isPresent()) {
+                AttachmentContent attachmentContent = optionalAttachmentContent.get();
+                attachmentContentRepository.delete(attachmentContent);
+                return new Result("Attachment deleted", true);
 
+            }
         }
         return new Result("Such attachment not found", false);
     }
